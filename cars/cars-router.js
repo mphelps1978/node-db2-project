@@ -21,6 +21,7 @@ router.get('/', (req, res) => {
   })
 })
 
+// GET by id
 router.get('/:id', (req,res) => {
   db('cars')
   .where({id: req.params.id})
@@ -30,10 +31,11 @@ router.get('/:id', (req,res) => {
   .catch(err => {
     console.log(err.message);
     res.status(500).json({message: 'There was an error retrieving that car\'s information'})
-    
+
   })
 })
 
+// GET by vin
 router.get('/:vin', (req, res) => {
   db('cars')
   .where({id: req.params.vin})
@@ -43,10 +45,12 @@ router.get('/:vin', (req, res) => {
   .catch(err => {
     console.log(err.message);
     res.status(500).json({message: 'There was an error retrieving that car\'s information'})
-    
+
   })
-  
+
 })
+
+//POST new Car
 
 router.post('/', validateCar, (req, res) => {
   const body = req.body
@@ -73,11 +77,13 @@ router.post('/', validateCar, (req, res) => {
     })
 })
 
+// PUT - update car info
+
 router.put('/:id', validateID, validateCar, (req, res) => {
   const body = req.body
   db('cars')
-  .where({id: req.params.id})
   .update(body)
+  .where({id: req.params.id})
   .then(updated => {
       db('cars')
       .where({id: req.params.id})
@@ -96,7 +102,7 @@ router.put('/:id', validateID, validateCar, (req, res) => {
   })
 })
 
-// DELETE
+// DELETE car
 
 router.delete('/:id', validateID, (req, res) => {
   db('accounts')
@@ -111,6 +117,10 @@ router.delete('/:id', validateID, (req, res) => {
   })
 })
 
+
+// MIDDLEWARE
+
+// Validate ID when used as parameter
 
 function validateID(req, res, next) {
   console.log(typeof req.params.id, req.params.id);
@@ -133,7 +143,8 @@ function validateID(req, res, next) {
     });
 }
 
-// Validate body on create new car request - ACTIVE
+// Validate body on create new car request
+
 function validateCar(req, res, next) {
   if (!Object.keys(req.body).length) {
     res.status(400).json({ message: 'Missing action data!' });
