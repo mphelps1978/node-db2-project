@@ -91,7 +91,7 @@ router.put('/:id', validateID, validateCar, (req, res) => {
 // DELETE car
 
 router.delete('/:id', validateID, (req, res) => {
-  db('accounts')
+  db('cars')
   .where({id: req.params.id})
   .del()
   .then(deleted => {
