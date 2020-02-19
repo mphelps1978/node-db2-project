@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 })
 
 // GET by id
-router.get('/:id', (req,res) => {
+router.get('/:id', validateID, (req,res) => {
   db('cars')
   .where({id: req.params.id})
   .then(car => {
@@ -35,20 +35,6 @@ router.get('/:id', (req,res) => {
   })
 })
 
-// GET by vin
-router.get('/:vin', (req, res) => {
-  db('cars')
-  .where({id: req.params.vin})
-  .then(car => {
-    res.status(200).json(car)
-  })
-  .catch(err => {
-    console.log(err.message);
-    res.status(500).json({message: 'There was an error retrieving that car\'s information'})
-
-  })
-
-})
 
 //POST new Car
 
@@ -125,12 +111,12 @@ router.delete('/:id', validateID, (req, res) => {
 function validateID(req, res, next) {
   console.log(typeof req.params.id, req.params.id);
 
-  db('accounts')
+  db('cars')
   .where({id: req.params.id})
   .first()
-    .then(account => {
-        console.log(account)
-      if (!account) {
+    .then(car => {
+        // console.log(car)
+      if (!car) {
         res.status(400).json({ message: 'Invalid ID' });
       } else {
         req.user = req.params.id;
@@ -147,7 +133,7 @@ function validateID(req, res, next) {
 
 function validateCar(req, res, next) {
   if (!Object.keys(req.body).length) {
-    res.status(400).json({ message: 'Missing action data!' });
+    res.status(400).json({ message: 'Missing vehicle data!' });
   } else if (!req.body.make) {  // could we put (!req.body.make || !req.body.make.length) to make sure that they didn't just include the field with no value?
     res.status(400).json({ message: 'Missing required "make" field!' });
   } else if (!req.body.model) {
